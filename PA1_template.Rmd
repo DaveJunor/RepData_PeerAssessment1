@@ -2,7 +2,9 @@
 title: "Reproducible Research Project 01"
 author: "David Junor"
 date: "August 6, 2016"
-output: html_document
+output: 
+        md_document:
+                variant: markdown_github
 ---
 
 ```{r setup, echo=TRUE}
@@ -39,6 +41,8 @@ The median number of steps per day is `r medianTotalSteps`.
 ```{r}
 # Create time series plot
 average <- aggregate(x=list(meanSteps=activity$steps), by=list(interval=activity$interval), FUN=mean, na.rm=TRUE)
+```
+```{r}
 ggplot(data = average,aes(x = interval,y = meanSteps))+geom_line()+xlab("5 minutes")+ylab("Average steps")
 ```
 ```{r}
@@ -58,10 +62,13 @@ The number of missing values is: `r numMissingValues`.
 activityImputed <- activity
 activityImputed$steps <- impute(activity$steps, fun=mean)
 stepsByDayImputed <- tapply(activityImputed$steps, activityImputed$date, sum)
-qplot(stepsByDayImputed, xlab='Total steps per day (Imputed)', ylab='Frequency (binwidth = 1000', binwidth=1000)
 meanISteps <- mean(stepsByDayImputed)
 medianISteps <- median(stepsByDayImputed)
 ```
+```{r}
+qplot(stepsByDayImputed, xlab='Total steps per day (Imputed)', ylab='Frequency (binwidth = 1000', binwidth=1000)
+```
+
 The mean steps/day is `r meanISteps` and the median is `r medianISteps`.
 
 ###5. Difference in activity patterns between weekdays and weekends?
@@ -69,6 +76,8 @@ The mean steps/day is `r meanISteps` and the median is `r medianISteps`.
 activityImputed$dateType <-  ifelse(as.POSIXlt(activityImputed$date)$wday %in% c(0,6), 'weekend', 'weekday')
 # Make time series plots
 averagedActivityImputed <- aggregate(steps ~ interval + dateType, data=activityImputed, mean)
+```
+```{r}
 ggplot(averagedActivityImputed, aes(interval, steps)) + 
     geom_line() + 
     facet_grid(dateType ~ .) +
